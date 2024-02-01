@@ -1,1 +1,2 @@
-# crc-backend
+# Lambda Backend for DynamoDB access
+
