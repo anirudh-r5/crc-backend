@@ -100,3 +100,18 @@ resource "aws_iam_role_policy_attachment" "lambda_access_attachment" {
   policy_arn = aws_iam_policy.lambda_access_policy.arn
   role       = aws_iam_role.lambda_exec_role.name
 }
+
+module "api_gateway" {
+  source = "./modules/api_gateway"
+
+  lambda_arn = aws_lambda_function.lambda_deploy.invoke_arn
+}
+
+resource "aws_lambda_permission" "api_invoke_permission" {
+  statement_id  = "APIGatewayInvokePermission"
+  principal     = "apigateway.amazonaws.com"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_deploy.function_name
+
+  source_arn = "${module.api_gateway.api_gateway_arn}/*"
+}
