@@ -27,10 +27,6 @@ resource "aws_dynamodb_table" "metadata_table" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "backend_logs" {
-  name = "/aws/lambda/${var.project_name}Logs"
-}
-
 data "aws_iam_policy_document" "lambda_exec_policy" {
   statement {
     effect = "Allow"
@@ -57,6 +53,10 @@ resource "aws_lambda_function" "lambda_deploy" {
 
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   runtime          = "nodejs20.x"
+}
+
+resource "aws_cloudwatch_log_group" "backend_logs" {
+  name = "/aws/lambda/${aws_lambda_function.lambda_deploy.function_name}"
 }
 
 data "aws_iam_policy_document" "ddb_cloudwatch_policy" {
@@ -87,7 +87,7 @@ data "aws_iam_policy_document" "ddb_cloudwatch_policy" {
       "logs:PutLogEvents"
     ]
 
-    resources = [aws_cloudwatch_log_group.backend_logs.arn]
+    resources = ["${aws_cloudwatch_log_group.backend_logs.arn}:*"]
   }
 }
 
