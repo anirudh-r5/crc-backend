@@ -25,20 +25,6 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   uri                     = var.lambda_arn
 }
 
-resource "aws_api_gateway_deployment" "api_deployment" {
-  rest_api_id = aws_api_gateway_rest_api.dashboard_api.id
-
-  triggers = sha1(join(",", [
-    jsonencode(aws_api_gateway_resource.resource_stats),
-    jsonencode(aws_api_gateway_method.post_view_counter),
-    jsonencode(aws_api_gateway_integration.lambda_integration)
-  ]))
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_api_gateway_stage" "dev_stage" {
   rest_api_id   = aws_api_gateway_rest_api.dashboard_api.id
   deployment_id = aws_api_gateway_deployment.api_deployment.id
@@ -54,5 +40,20 @@ resource "aws_api_gateway_method_settings" "global_throttle" {
   settings {
     throttling_burst_limit = 50
     throttling_rate_limit  = 2
+  }
+}
+
+resource "aws_api_gateway_deployment" "api_deployment" {
+  rest_api_id = aws_api_gateway_rest_api.dashboard_api.id
+
+  variables = {
+    trigger_hash = sha1(join(",", [
+      jsonencode(aws_api_gateway_resource.resource_stats),
+      jsonencode(aws_api_gateway_method.post_view_counter),
+      jsonencode(aws_api_gateway_integration.lambda_integration)
+  ])) }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
