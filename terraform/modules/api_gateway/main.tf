@@ -28,10 +28,10 @@ resource "aws_api_gateway_integration" "lambda_integration" {
 resource "aws_api_gateway_deployment" "api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.dashboard_api.id
 
-  triggers = sha1(jsonencode([
-    aws_api_gateway_resource.resource_stats,
-    aws_api_gateway_method.post_view_counter,
-    aws_api_gateway_integration.lambda_integration
+  triggers = sha1(join(",", [
+    jsonencode(aws_api_gateway_resource.resource_stats),
+    jsonencode(aws_api_gateway_method.post_view_counter),
+    jsonencode(aws_api_gateway_integration.lambda_integration)
   ]))
 
   lifecycle {
