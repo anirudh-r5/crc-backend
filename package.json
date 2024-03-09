@@ -7,9 +7,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"predev": "tsc --build --clean",
+    "predev": "tsc --build --clean",
     "dev": "tsc -p tsconfig.json --watch",
-	"build": "esbuild src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js"
+    "prebuild": "tsc --build --clean",
+    "build": "esbuild src/ --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -24,8 +25,11 @@
     "esbuild": "^0.20.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.2",
     "prettier": "3.1.1",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.509.0",
+    "@aws-sdk/lib-dynamodb": "^3.509.0"
   }
 }

@@ -135,3 +135,4 @@ dist
 *.tfstate.*
 *.tfvars
 *.tfvars.json
+*.tfbackend
